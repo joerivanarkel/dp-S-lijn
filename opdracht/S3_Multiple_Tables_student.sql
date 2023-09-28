@@ -41,15 +41,14 @@ JOIN medewerkers on medewerkers.mnr = uitvoeringen.docent
 -- Geef in twee kolommen naast elkaar de achternaam van elke cursist (`cursist`)
 -- van alle S02-cursussen, met de achternaam van zijn cursusdocent (`docent`).
 DROP VIEW IF EXISTS s3_2; CREATE OR REPLACE VIEW s3_2 AS                                                     -- [TEST]
-SELECT 
-cursist.naam as cursist_naam, docent.naam as docent_naam
--- *
-from cursussen
-join uitvoeringen ON cursussen.code = uitvoeringen.cursus
-join inschrijvingen ON cursussen.code = inschrijvingen.cursus
+SELECT cursist.naam as cursist_naam, docent.naam as docent_naam
+from uitvoeringen
+join inschrijvingen ON uitvoeringen.cursus = inschrijvingen.cursus 
+    AND uitvoeringen.begindatum = inschrijvingen.begindatum
 JOIN medewerkers as cursist on cursist.mnr = inschrijvingen.cursist
 JOIN medewerkers as docent on docent.mnr = uitvoeringen.docent
-WHERE inschrijvingen.cursus = 'S02'
+WHERE uitvoeringen.cursus = 'S02'
+    AND docent.naam <> cursist.naam
 ;
 -- S3.3.
 -- Geef elke afdeling (`afdeling`) met de naam van het hoofd van die
@@ -76,6 +75,7 @@ SELECT medewerkers.naam as cursist_naam
 FROM medewerkers
 JOIN inschrijvingen ON medewerkers.mnr = inschrijvingen.cursist
 JOIN uitvoeringen ON uitvoeringen.cursus = inschrijvingen.cursus
+    AND uitvoeringen.begindatum = inschrijvingen.begindatum
 WHERE uitvoeringen.begindatum = '2019-04-12' AND uitvoeringen.cursus = 'S02'
 ;
 
