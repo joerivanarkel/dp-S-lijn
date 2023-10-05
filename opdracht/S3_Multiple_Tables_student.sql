@@ -47,8 +47,8 @@ join inschrijvingen ON uitvoeringen.cursus = inschrijvingen.cursus
     AND uitvoeringen.begindatum = inschrijvingen.begindatum
 JOIN medewerkers as cursist on cursist.mnr = inschrijvingen.cursist
 JOIN medewerkers as docent on docent.mnr = uitvoeringen.docent
-WHERE uitvoeringen.cursus = 'S02'
-    AND docent.naam <> cursist.naam
+WHERE uitvoeringen.cursus = 'S02';
+    -- AND docent.naam <> cursist.naam
 ;
 -- S3.3.
 -- Geef elke afdeling (`afdeling`) met de naam van het hoofd van die
