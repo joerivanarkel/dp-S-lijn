@@ -118,9 +118,7 @@ CREATE INDEX ord_exp_del_idx ON orders (expected_delivery_date);
 -- 3. Maak de index(en) aan en run nogmaals het EXPLAIN plan (kopieer weer onder de opdracht) 
 -- 4. Wat voor verschillen zie je? Verklaar hieronder.
 
-
-
-
+-- Er wordt nu gebruik gemaakt van de indexen die we hebben aangemaakt.
 
 EXPLAIN SELECT orders.order_id, orders.order_date, orders.salesperson_person_id, 
         (orders.expected_delivery_date - orders.order_date) AS levertijd, 
@@ -142,6 +140,20 @@ ORDER BY levertijd DESC, orders.salesperson_person_id;
 
 -- 1. Schrijf hieronder je nieuwe query op
 
+EXPLAIN SELECT orders.order_id, orders.order_date, orders.salesperson_person_id, 
+        (orders.expected_delivery_date - orders.order_date) AS levertijd, 
+        order_lines.quantity
+FROM orders
+INNER JOIN order_lines ON orders.order_id = order_lines.order_id
+INNER JOIN (
+    SELECT orders.salesperson_person_id
+    FROM orders
+    GROUP BY orders.salesperson_person_id
+    HAVING AVG(orders.expected_delivery_date - orders.order_date) > 1.45
+) AS sub ON orders.salesperson_person_id = sub.salesperson_person_id
+WHERE order_lines.quantity > 250
+
+-- De query is nu sneller omdat er geen subquery meer wordt gebruikt.
 
 -- Revert to original state
 DROP INDEX ord_lines_si_id_idx;
